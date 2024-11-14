@@ -147,7 +147,7 @@ reference_aq <- reference_data(
     avg.time = "1 min"
 )
 
-#plot meteorologcal condtions during experiment measured by AQ-Guard
+#plot meteorological condtions during experiment measured by AQ-Guard
 ggplot(reference_aq %>% mutate(abs_hum = threadr::absolute_humidity(air_temp = air_temp, rh = RH)) %>% dplyr::select(date, RH, abs_hum, air_temp) %>% gather(var, val, -date)) +
     geom_line(aes(x = date, y = val, col = var)) +
     facet_wrap(. ~ var, scales = "free", nrow = 3, labeller = as_labeller(lookup)) +
@@ -550,6 +550,15 @@ data_ls <- getLSData(path = "data\\LS_PID\\Download", datasource = "device", sta
 # summarises the performance (statistical linearity parameters -- see function) for 5 min and 1 hours averages
 summary_performance(data_ls, df_ref = reference, start = "2024-02-26", end = "2024-02-28", avg.time = "5 min", devicetype = "LS_only_CO2_period", referencetype = "Vaisala-GMP251")
 summary_performance(data_ls, df_ref = reference, start = "2024-02-26", end = "2024-02-28", avg.time = "1 hour", devicetype = "LS_only_CO2_period", referencetype = "Vaisala-GMP251")
+
+# precision
+parameters <- names(data_ls %>% dplyr::select(-device_id, -date, -VOC_P3))
+sink("output\\LS_only_CO2_period\\Precision_LAS_2024-02-26_145800-2024-02-27_100000.txt")
+for (p in parameters) {
+    precision(data_ls, parameter = p, start = "2024-02-26 14:58:00 UTC", end = "2024-02-27 10:00:00 UTC", 
+    avg.time = "5 min", devicetype = "LS_only_CO2_period")
+}
+sink(file = NULL)
 
 # only CO2 as parameter considers 5 min averages
 parameters <- "CO2"
