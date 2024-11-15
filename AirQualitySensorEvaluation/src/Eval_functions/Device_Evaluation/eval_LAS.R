@@ -1385,3 +1385,99 @@ for (p in parameters) {
         start = "2024-02-12 10:00:00 UTC", end = "2024-03-01 10:00:00 UTC", avg.time = "5 min", devicetype = "LS_all_period_above_25µg", reference_device = "Palas_cal"
     )
 }
+
+##### room test - ARD
+results <- readr::read_delim("data\\result_room_ATD_2.65.csv", col_names = T, delim = ",") %>% 
+spread(var,val) %>% 
+rename(device_id="device")
+
+ls_data <- getLSData(path = "data\\LS_PID\\Download", datasource = "device",
+        start = "2024-03-22",
+        end = "2024-03-23",hours_difference_to_local_time = 1)%>%
+        openair::timeAverage(avg.time="3 min",start.date = "2024-03-22 00:00:00",type="device_id")
+
+parameters <- names(ls_data%>%dplyr::select(-device_id,-date))
+
+sink("output\\LS_room_period\\Precision_LAS_202403221200-202403221600_5min.txt")
+for(p in parameters){
+   precision(testdata = ls_data%>%mutate(device_id=as.character(device_id)), start="2024-03-22 12:00:00 UTC",
+    end="2024-03-22 16:00:00 UTC",parameter=p,avg.time="5 min",devicetype="LS-PID_room_test_ATD2.65")
+}
+sink(file=NULL)
+
+
+parameters <- match_parameters(ls_data%>%dplyr::select(-device_id),results)
+for(p in parameters){
+   correlation(test_data = ls_data%>%mutate(device_id=as.character(device_id)),reference=results, start="2024-03-22 12:00:00 UTC",
+    end="2024-03-22 16:00:00 UTC",parameter=p,avg.time="15 min",devicetype="LS-PID_room_test",reference_device="MPSS_APSS_2.65")
+}
+
+palas <- getPalasData("data\\AQ_Guard\\",
+        start = "2024-03-22",
+        end = "2024-03-23",
+        plot = FALSE
+    ) %>% 
+    openair::timeAverage(avg.time="3 min",start="2024-03-22 00:00:00",statistic = "mean",data.thresh = 0) %>% 
+    mutate(device_id="Palas_13265")%>%mutate(date=date-2*3600)
+
+parameters <- match_parameters((ls_data %>% dplyr::select(date,PM02.5,PM10)),palas)
+for(p in parameters){
+   correlation(test_data = ls_data%>%mutate(device_id=as.character(device_id)),reference=palas, start="2024-03-22 12:00:00 UTC",
+    end="2024-03-22 16:00:00 UTC",parameter=p,avg.time="5 min",devicetype="LS-PID_room_test",reference_device="Palas")
+}
+
+for(p in parameters){
+   correlation(test_data = ls_data%>%mutate(device_id=as.character(device_id)),reference=palas, start="2024-03-22 12:00:00 UTC",
+    end="2024-03-22 16:00:00 UTC",parameter=p,avg.time="1 hour",devicetype="LS-PID_room_test",reference_device="Palas")
+}
+
+#### room test - NH42SO4
+
+results_amsulf <- readr::read_delim("data\\result_room_NH42SO4_1.77.csv", col_names = T, delim = ",") %>% 
+spread(var,val) %>% 
+rename(device_id="device")
+
+palas <- getPalasData("data\\AQ_Guard\\",
+        start = "2024-03-25",
+        end = "2024-03-28",
+        plot = FALSE
+    )%>%dplyr::select(date,PM01,PM02.5,PM10) %>% 
+    openair::timeAverage(avg.time="5 min",start="2024-03-25 14:00:00",statistic = "mean",data.thresh = 0) %>% 
+    mutate(device_id="Palas_13265") %>% mutate(date=date-2*3600)
+
+
+ls_data <- getLSData(path = "data\\LS_PID\\Download", datasource = "device",
+        start = "2024-03-25",
+        end = "2024-03-28",hours_difference_to_local_time = 1)%>%
+        openair::timeAverage(avg.time="5 min",start.date = "2024-03-25 00:00:00",type="device_id")
+
+        
+parameters <- names(ls_data%>%dplyr::select(-device_id,-date))
+sink("output\\LS_room_period\\Precision_LAS_202403221200-202403221600_5min_AMSulf.txt")
+for(p in parameters){
+   precision(testdata = ls_data%>%mutate(device_id=as.character(device_id)), start="2024-03-26 10:00:00 UTC",
+    end="2024-03-26 16:00:00 UTC",parameter=p,avg.time="5 min",devicetype="LS-PID_room_test_AmSulf")
+}
+sink(file=NULL)
+
+parameters <- match_parameters(ls_data %>% dplyr::select(-device_id),results_amsulf)
+for(p in parameters){
+   correlation(test_data = ls_data%>%mutate(device_id=as.character(device_id)),reference=results_amsulf, start="2024-03-26 10:00:00 UTC",
+    end="2024-03-26 16:00:00 UTC",parameter=p,avg.time="5 min",devicetype="LS-PID_room_test",reference_device="MPSS_APSS_Amsulf_1.77")
+}
+
+for(p in parameters){
+   correlation(test_data = ls_data%>%mutate(device_id=as.character(device_id)),reference=results_amsulf, start="2024-03-26 10:00:00 UTC",
+    end="2024-03-26 16:00:00 UTC",parameter=p,avg.time="15 min",devicetype="LS-PID_room_test",reference_device="MPSS_APSS_Amsulf_1.77")
+}
+
+parameters <- match_parameters((ls_data %>% dplyr::select(date,PM02.5,PM10)),palas)
+for(p in parameters){
+   correlation(test_data = ls_data%>%mutate(device_id=as.character(device_id)),reference=palas, start="2024-03-26 10:00:00 UTC",
+    end="2024-03-26 16:00:00 UTC",parameter=p,avg.time="5 min",devicetype="LS-PID_room_test_Amsulf",reference_device="Palas")
+}
+
+for(p in parameters){
+   correlation(test_data = ls_data%>%mutate(device_id=as.character(device_id)),reference=palas, start="2024-03-26 10:00:00 UTC",
+    end="2024-03-26 16:00:00 UTC",parameter=p,avg.time="1 hour",devicetype="LS-PID_room_test_Amsulf",reference_device="Palas")
+}

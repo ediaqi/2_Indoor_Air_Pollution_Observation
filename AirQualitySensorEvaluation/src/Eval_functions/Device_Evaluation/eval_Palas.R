@@ -130,3 +130,46 @@ for (p in parameters) {
     print(paste0("Parameter: ", p))
     correlation(data_palas %>% mutate(CO2 = (CO2 + 40.5) / 0.941), reference = data_CO2, parameter = p, start = "2024-02-12", end = "2024-02-16", avg.time = "5 min", devicetype = "Palas_Adj_CO2", reference_device = "Vaisala_GMP251")
 }
+
+
+### Palas test for ATD
+results <- readr::read_delim("data\\result_room_ATD_2.65.csv", col_names = T, delim = ",") %>% 
+spread(var,val) %>% 
+rename(device_id="device")
+
+palas <- getPalasData("data\\AQ_Guard\\",
+        start = "2024-03-22",
+        end = "2024-03-23",
+        plot = FALSE
+    )%>%dplyr::select(date,PM01,PM02.5,PM10) %>% 
+    openair::timeAverage(avg.time="3 min",start="2024-03-22 00:00:00",statistic = "mean",data.thresh = 0) %>% 
+    mutate(device_id="Palas_13265")%>%mutate(date=date-2*3600)
+
+#plt.scatter <- full_join(palas%>%rename(palas="val"),results%>%rename(Tropos="val"))
+parameters <- match_parameters(palas%>%dplyr::select(-device_id),results)
+for(p in parameters){
+   correlation(test_data = palas,reference=results, start="2024-03-22 12:00:00 UTC",
+    end="2024-03-22 16:00:00 UTC",parameter=p,avg.time="3 min",devicetype="Palas_room_test",reference_device="MPSS_APSS_2.65")
+ 
+}
+
+### Palas test for AmSulf
+results_amsulf <- readr::read_delim("data\\result_room_NH42SO4_1.77.csv", col_names = T, delim = ",") %>% 
+spread(var,val) %>% 
+rename(device_id="device")
+
+palas <- getPalasData("data\\AQ_Guard\\",
+        start = "2024-03-25",
+        end = "2024-03-28",
+        plot = FALSE
+    )%>%dplyr::select(date,PM01,PM02.5,PM10) %>% 
+    openair::timeAverage(avg.time="5 min",start="2024-03-25 14:00:00",statistic = "mean",data.thresh = 0) %>% 
+    mutate(device_id="Palas_13265") %>% mutate(date=date-2*3600)
+
+#plt.scatter <- full_join(palas%>%rename(palas="val"),results%>%rename(Tropos="val"))
+parameters <- match_parameters(palas%>%dplyr::select(-device_id),results_amsulf)
+for(p in parameters){
+   correlation(test_data = palas,reference=results_amsulf, start="2024-03-26 10:00:00 UTC",
+    end="2024-03-26 16:00:00 UTC",parameter=p,avg.time="5 min",devicetype="Palas_room_test",reference_device="MPSS_APSS_1.77_NH42SO4")
+ 
+}
