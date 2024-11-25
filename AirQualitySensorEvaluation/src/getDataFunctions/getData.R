@@ -113,10 +113,10 @@ getWingsData <- function(start="2023-12-01",end="2023-12-02",type="i",id="17",pl
     install.packages(packages[!installed_packages])
   }
   if (type=="i"){
-    json <- GET(paste0("https://airwings-europe.wings-ict-solutions.eu/api/realvaluesindoor?raw=true&device_id=",id,"&start=",start,"&stop=",end),
+    json <- GET(paste0("https://airwings-europe.wings-ict-solutions.eu/api/realvaluesindoor?raw=true&device_id=",id,"&start=",start,"T00:00:00&stop=",end,"T00:00:00&timezone=UTC"),
                 add_headers("x-api-key" = api_key),accept_json())
   }else if (type=="o"){
-    json <- GET(paste0("https://airwings-europe.wings-ict-solutions.eu/api/realvalues?raw=true&device_id=",id,"&start=",start,"&stop=",end),
+    json <- GET(paste0("https://airwings-europe.wings-ict-solutions.eu/api/realvalues?raw=true&device_id=",id,"&start=",start,"T00:00:00&stop=",end,"T00:00:00&timezone=UTC"),
                 add_headers("x-api-key" = api_key),accept_json())
                 print(json)
   }else{
@@ -134,16 +134,16 @@ getWingsData <- function(start="2023-12-01",end="2023-12-02",type="i",id="17",pl
   #asign header for indoor and outdoor
   if(type=="i"){
   #indoor
-    header_indoor<-c("CO2","VOC","CO","PM01","PM02.5","PM10","air_temp","RH","pressure","device_id","date")
+    header_indoor<-c("timezone","CO2","VOC","CO","PM01","PM02.5","PM10","air_temp","RH","pressure","device_id","date")
     names(data) <- header_indoor
   } else {
   #outdoor
   #depending on unit there is sometimes CO2 measured or not, this accounts for that
     
     if("CO2" %in% names(data)){
-      header_outdoor <- c("NO2","O3","SO2","CO","PM01","PM02.5","PM10","NO","CO2","air_temp","RH","pressure","noise","device_id","date")
+      header_outdoor <- c("timezone","NO2","O3","SO2","CO","PM01","PM02.5","PM10","NO","CO2","air_temp","RH","pressure","noise","device_id","date")
     }else{
-      header_outdoor <- c("NO2","O3","SO2","CO","PM01","PM02.5","PM10","NO","air_temp","RH","pressure","noise","device_id","date")
+      header_outdoor <- c("timezone","NO2","O3","SO2","CO","PM01","PM02.5","PM10","NO","air_temp","RH","pressure","noise","device_id","date")
     }
     
     names(data) <- header_outdoor
