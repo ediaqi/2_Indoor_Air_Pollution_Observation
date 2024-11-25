@@ -123,31 +123,14 @@ getWingsData <- function(start="2023-12-01",end="2023-12-02",type="i",id="17",pl
     print("Please define type indoor/outdoor")
     break()
   }
+  lookup_wings <- c(date = "date",VOC="TVOC",PM01 = "PM1",PM02.5 = "PM25", air_temp = "temperature", RH = "humidity", pressure = "atmospheric_pressure")
+  
   tmp <- jsonlite::fromJSON(httr::content(json, "text")) # jsonobject to table
-  print(tmp %>% head()) #print(data)
   # conversion of timestamp to proper date POSIX.ct format
   data <- tmp %>%
-    mutate(date=as.POSIXct(strptime(timestamp,"%Y-%m-%d %H:%M:%S",tz="UTC"),tz="UTC")) %>% dplyr::select(-timestamp)
+    mutate(date=as.POSIXct(strptime(timestamp,"%Y-%m-%d %H:%M:%S",tz="UTC"),tz="UTC")) %>% dplyr::select(-timestamp) %>% dplyr::relocate(date,.before=timezone) %>% rename(any_of(lookup_wings))
   
   print(data %>% head()) #print(data)
-  
-  #asign header for indoor and outdoor
-  if(type=="i"){
-  #indoor
-    header_indoor<-c("timezone","CO2","VOC","CO","PM01","PM02.5","PM10","air_temp","RH","pressure","device_id","date")
-    names(data) <- header_indoor
-  } else {
-  #outdoor
-  #depending on unit there is sometimes CO2 measured or not, this accounts for that
-    
-    if("CO2" %in% names(data)){
-      header_outdoor <- c("timezone","NO2","O3","SO2","CO","PM01","PM02.5","PM10","NO","CO2","air_temp","RH","pressure","noise","device_id","date")
-    }else{
-      header_outdoor <- c("timezone","NO2","O3","SO2","CO","PM01","PM02.5","PM10","NO","air_temp","RH","pressure","noise","device_id","date")
-    }
-    
-    names(data) <- header_outdoor
-  }
   
   #if plot boolean is activated data is plotted as is facted by variables (all devices at once)
   if (plt == TRUE) {
