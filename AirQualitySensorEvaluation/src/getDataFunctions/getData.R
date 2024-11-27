@@ -1,6 +1,6 @@
 
 getLSData <- function(
-    path = "\\data\\LS_PID\\",
+    path = "data\\LS_PID\\",
     datasource = "archive",
     start = "2024-02-13 00:00:00",
     end = "2024-02-16 00:00:00",
@@ -56,10 +56,12 @@ getLSData <- function(
          names(data) <- c("date", "device_id", "NO2", "CO", "O3", "RH_CO2", "CO2", "temp_CO2", "PM02.5", "PM10", "VOC", "temp_VOC", "RH", "air_temp", "air_pressure", "VOC_P3")
 
     } else if (datasource == "device") {
-        f.pid <- list.files(paste0(path, "\\Download\\"),
-            pattern = ".csv", full.names = T, recursive = T
+        storage_path <- paste0(path, "Download\\")
+        print(storage_path)
+        f.pid <- list.files(storage_path,
+            pattern = ".csv", full.names = T, recursive = F
         )
-        
+        print(f.pid)
         t.pid <- data.frame()
         for (f in f.pid) {
             temp <- read_delim(f, delim = ",", col_names = T, id = "device_id") %>% mutate(device_id = substr(basename(f), 1, 12))
@@ -87,7 +89,7 @@ getLSData <- function(
                 geom_line(aes(x = date, y = val, col = var)) +
                     facet_wrap(. ~ var, scales = "free", nrow = 4)+
                     theme_bw(16)
-            ggsave(plot = plt, filename = paste0("plt\\LS\\", id, "_overview_", timeidentifier, ".png"),
+            ggsave(plot = plt, filename = paste0(".\\plt\\LS\\", id, "_overview_", timeidentifier, ".png"),
              width = 20 * 1.5, height = 15 * 1.5, units = "cm", dpi = 450)
             print(plt)
         }
@@ -610,7 +612,7 @@ getRHTeraTermData <- function(start, end) {
     print(plt)
 
     #Plot saved stored at given path
-    ggsave(plot = plt, paste0("plt\\RH_T_Indoor\\HYT_939_indoor_Vilnius_", start, "-", end, ".png"), width = 25, height = 15, units = "cm", dpi = "screen")
+    ggsave(plot = plt, paste0(".\\plt\\RH_T_Indoor\\HYT_939_indoor_Vilnius_", start, "-", end, ".png"), width = 25, height = 15, units = "cm", dpi = "screen")
     returns(df)
 }
 
@@ -654,7 +656,7 @@ getThinnectData <- function(path = "data\\Thinnect", avg.time = "5 min", start =
                 theme_bw(16)
             print(plt)
             #saves plot to given path            
-            ggsave(plot = plt, filename = paste0("plt\\Thinnect\\Thinnect_overview_", start, "-", end, ".png"),
+            ggsave(plot = plt, filename = paste0(".\\plt\\Thinnect\\Thinnect_overview_", start, "-", end, ".png"),
              width = 20*1.5, height = 15*1.5, units = "cm", dpi = 450)
         }
     return(data)

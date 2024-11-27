@@ -1391,7 +1391,7 @@ results <- readr::read_delim("data\\result_room_ATD_2.65.csv", col_names = T, de
 spread(var,val) %>% 
 rename(device_id="device")
 
-ls_data <- getLSData(path = "data\\LS_PID\\Download", datasource = "device",
+ls_data <- getLSData(path = paste0(getwd(),"\\data\\LS-PID\\"), datasource = "device",
         start = "2024-03-22",
         end = "2024-03-23")%>%
         openair::timeAverage(avg.time="3 min",start.date = "2024-03-22 00:00:00",type="device_id")
