@@ -1429,6 +1429,133 @@ summary_performance(
     end = "2023-12-20 00:00:00 UTC", # and end of period of interest
     avg.time = "1 hour")
 
+##### room test - ARD
+
+results <- readr::read_delim("data\\result_room_ATD_2.65.csv", col_names = T, delim = ",") %>% 
+spread(var,val) %>% 
+rename(device_id="device")
+
+#indoor and outdoor data
+ids_i <- c(17, 18, 19)
+ids_o <- c(1602, 1603, 1604)
+df_i <- NULL
+df_o <- NULL
+for (id in ids_i) {
+    data_wings <- getWingsData(start = "2024-03-22", end = "2024-03-23", type = "i", id = id, plt=F) %>% mutate(type = "indoor")
+    df_i <- bind_rows(df_i, data_wings)
+}
+
+for (id in ids_o) {
+    data_wings <- getWingsData(start = "2024-03-22", end = "2024-03-23", type = "o", id = id, plt=F) %>% mutate(type = "outdoor")
+    df_o <- bind_rows(df_o, data_wings)
+}
+
+palas <- getPalasData("data\\AQ_Guard\\",
+        start = "2024-03-22",
+        end = "2024-03-23",
+        plot = FALSE
+    ) %>% 
+    openair::timeAverage(avg.time="1 min",start="2024-03-22 00:00:00",statistic = "mean",data.thresh = 0) %>% 
+    mutate(device_id="Palas_13265")%>%mutate(date=date-2*3600)
+parameters <- names(ls_data%>%dplyr::select(-device_id,-date))
+
+
+#### Precision
+#### indoor
+sink("output\\Wings_indoor_room_period\\Precision_Wings_indoor_202403221200-202403221600_5min.txt")
+for(p in parameters){
+   precision(testdata = df_i%>%mutate(device_id=as.character(device_id)), start="2024-03-22 12:00:00 UTC",
+    end="2024-03-22 16:00:00 UTC",parameter=p,avg.time="5 min",devicetype="Wings_indoor_room_test_ATD2.65")
+}
+sink(file=NULL)
+
+sink("output\\Wings_indoor_room_period\\Precision_Wings_indoor_202403221200-202403221600_1hour.txt")
+for(p in parameters){
+   precision(testdata = df_i%>%mutate(device_id=as.character(device_id)), start="2024-03-22 12:00:00 UTC",
+    end="2024-03-22 16:00:00 UTC",parameter=p,avg.time="1 hour",devicetype="Wings_indoor_room_test_ATD2.65")
+}
+sink(file=NULL)
+
+parameters <- match_parameters(ls_data%>%dplyr::select(-device_id),results)
+for(p in parameters){
+   correlation(test_data = ls_data%>%mutate(device_id=as.character(device_id)),reference=results, start="2024-03-22 12:00:00 UTC",
+    end="2024-03-22 16:00:00 UTC",parameter=p,avg.time="15 min",devicetype="LS-PID_room_test",reference_device="MPSS_APSS_2.65")
+}
+
+
+
+parameters <- match_parameters((ls_data %>% dplyr::select(date,PM02.5,PM10)),palas)
+for(p in parameters){
+   correlation(test_data = ls_data%>%mutate(device_id=as.character(device_id)),reference=palas, start="2024-03-22 12:00:00 UTC",
+    end="2024-03-22 16:00:00 UTC",parameter=p,avg.time="5 min",devicetype="LS-PID_room_test",reference_device="Palas")
+}
+
+for(p in parameters){
+   correlation(test_data = ls_data%>%mutate(device_id=as.character(device_id)),reference=palas, start="2024-03-22 12:00:00 UTC",
+    end="2024-03-22 16:00:00 UTC",parameter=p,avg.time="1 hour",devicetype="LS-PID_room_test",reference_device="Palas")
+}
+
+#### room test - NH42SO4
+
+results_amsulf <- readr::read_delim("data\\result_room_NH42SO4_1.77.csv", col_names = T, delim = ",") %>% 
+spread(var,val) %>% 
+rename(device_id="device")
+
+palas <- getPalasData("data\\AQ_Guard\\",
+        start = "2024-03-25",
+        end = "2024-03-28",
+        plot = FALSE
+    )%>%dplyr::select(date,PM01,PM02.5,PM10) %>% 
+    openair::timeAverage(avg.time="5 min",start="2024-03-25 14:00:00",statistic = "mean",data.thresh = 0) %>% 
+    mutate(device_id="Palas_13265") %>% mutate(date=date-2*3600)
+
+
+ls_data <- getLSData(path = "data\\LS_PID\\Download", datasource = "device",
+        start = "2024-03-25",
+        end = "2024-03-28",hours_difference_to_local_time = 1)%>%
+        openair::timeAverage(avg.time="5 min",start.date = "2024-03-25 00:00:00",type="device_id")
+
+        
+parameters <- names(ls_data%>%dplyr::select(-device_id,-date))
+sink("output\\LS_room_period\\Precision_LAS_202403221200-202403221600_5min_AMSulf.txt")
+for(p in parameters){
+   precision(testdata = ls_data%>%mutate(device_id=as.character(device_id)), start="2024-03-26 10:00:00 UTC",
+    end="2024-03-26 16:00:00 UTC",parameter=p,avg.time="5 min",devicetype="LS-PID_room_test_AmSulf")
+}
+sink(file=NULL)
+
+parameters <- match_parameters(ls_data %>% dplyr::select(-device_id),results_amsulf)
+for(p in parameters){
+   correlation(test_data = ls_data%>%mutate(device_id=as.character(device_id)),reference=results_amsulf, start="2024-03-26 10:00:00 UTC",
+    end="2024-03-26 16:00:00 UTC",parameter=p,avg.time="5 min",devicetype="LS-PID_room_test",reference_device="MPSS_APSS_Amsulf_1.77")
+}
+
+for(p in parameters){
+   correlation(test_data = ls_data%>%mutate(device_id=as.character(device_id)),reference=results_amsulf, start="2024-03-26 10:00:00 UTC",
+    end="2024-03-26 16:00:00 UTC",parameter=p,avg.time="15 min",devicetype="LS-PID_room_test",reference_device="MPSS_APSS_Amsulf_1.77")
+}
+
+parameters <- match_parameters((ls_data %>% dplyr::select(date,PM02.5,PM10)),palas)
+for(p in parameters){
+   correlation(test_data = ls_data%>%mutate(device_id=as.character(device_id)),reference=palas, start="2024-03-26 10:00:00 UTC",
+    end="2024-03-26 16:00:00 UTC",parameter=p,avg.time="5 min",devicetype="LS-PID_room_test_Amsulf",reference_device="Palas")
+}
+
+for(p in parameters){
+   correlation(test_data = ls_data%>%mutate(device_id=as.character(device_id)),reference=palas, start="2024-03-26 10:00:00 UTC",
+    end="2024-03-26 16:00:00 UTC",parameter=p,avg.time="1 hour",devicetype="LS-PID_room_test_Amsulf",reference_device="Palas")
+}
+
+
+
+
+
+
+
+
+
+
+
 
 ####### Zagreb test
 #### Evaluation of Wings sensors (indoor and outdoor)
@@ -1647,7 +1774,6 @@ summary_performance(
     start="2024-07-03 12:00:00 UTC", # start of period of interest
     end="2024-07-05 14:00:00 UTC", # and end of period of interest
     avg.time = "1 hour")
-
 
 #reference Wings_outdoor ID402
 # Acccuracy 1 h
