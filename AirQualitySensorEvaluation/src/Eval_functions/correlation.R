@@ -153,7 +153,7 @@ correlation <- function(test_data = data,
     # saves combined plots 
     ggsave(
         paste0("plt\\", devicetype, "\\Correlation\\", parameter, "_", timeidentifier, "_", reference_device, "_", gsub(" ", "", avg.time), ".png"), # filenames were data is stored
-    plot = plt_c, width = 40, height = 20, units = "cm", dpi = "screen")
+    plot = plt_c, width = 40, height = 20, units = "cm", dpi = "screen",create.dir = T)
     # print(head(data_accuracy))
     
     # calculates correaltion of both data sets 
@@ -223,7 +223,7 @@ correlation_with_RH <- function(data = data,
         theme(aspect.ratio = 1) #+ scale_color_gradient2(midpoint = 40, low="#1742ff", high="#ff2222")
 
     print(plt_a)
-    ggsave(paste0("plt\\", devicetype, "\\Correlation\\", parameter, "_", timeidentifier, "_", reference_device, "_withRH.png"), plot = plt_a, width = 40, height = 20, units = "cm", dpi = "screen")
+    ggsave(paste0("plt\\", devicetype, "\\Correlation\\", parameter, "_", timeidentifier, "_", reference_device, "_withRH.png"), plot = plt_a, width = 40, height = 20, units = "cm", dpi = "screen",create.dir = T)
 }
 
 # basically the same as correlation function but faceted by device_id and data points colored based on reference temperature
@@ -285,7 +285,7 @@ correlation_with_T <- function(data = data,
         theme(aspect.ratio = 1) #+ scale_color_gradient2(midpoint = 40, low="#1742ff", high="#ff2222")
 
     print(plt_a)
-    ggsave(paste0("plt\\", devicetype, "\\Correlation\\", parameter, "_", timeidentifier, "_", reference_device, "_withT.png"), plot = plt_a, width = 40, height = 20, units = "cm", dpi = "screen")
+    ggsave(paste0("plt\\", devicetype, "\\Correlation\\", parameter, "_", timeidentifier, "_", reference_device, "_withT.png"), plot = plt_a, width = 40, height = 20, units = "cm", dpi = "screen",create.dir = T)
     # print(head(data_accuracy))
     result <- data_accuracy %>%
         reframe(corr = cor(!!sym(paste0(parameter, ".reference")), !!sym(paste0(parameter, ".test")), method = "pearson")) # %>%
@@ -352,7 +352,7 @@ correlation_with_abshum <- function(data = data,
         theme(aspect.ratio = 1) #+ scale_color_gradient2(midpoint = 40, low="#1742ff", high="#ff2222")
 
     print(plt_a)
-    ggsave(paste0("plt\\", devicetype, "\\Correlation\\", parameter, "_", timeidentifier, "_", reference_device, "_with_AbsHum.png"), plot = plt_a, width = 40, height = 20, units = "cm", dpi = "screen")
+    ggsave(paste0("plt\\", devicetype, "\\Correlation\\", parameter, "_", timeidentifier, "_", reference_device, "_with_AbsHum.png"), plot = plt_a, width = 40, height = 20, units = "cm", dpi = "screen",create.dir = T)
     
     result <- data_accuracy %>%
         reframe(corr = cor(!!sym(paste0(parameter, ".reference")), !!sym(paste0(parameter, ".test")), method = "pearson")) # %>%
@@ -421,5 +421,5 @@ correlation_along_x <- function(data = data,
     ggsave(paste0(
         "plt\\", devicetype, "\\Correlation\\", parameter, "_",
         timeidentifier, "_", reference_device, "_along",alongWhat,".png"
-    ), plot = plt_a, width = 40, height = 20, units = "cm", dpi = "screen")
+    ), plot = plt_a, width = 40, height = 20, units = "cm", dpi = "screen",create.dir = T)
 }
