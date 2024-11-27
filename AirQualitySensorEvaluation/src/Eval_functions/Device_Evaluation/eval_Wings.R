@@ -1441,12 +1441,12 @@ ids_o <- c(1602, 1603, 1604)
 df_i <- NULL
 df_o <- NULL
 for (id in ids_i) {
-    data_wings <- getWingsData(start = "2024-03-22", end = "2024-03-23", type = "i", id = id, plt=F) %>% mutate(type = "indoor")
+    data_wings <- getWingsData(start = "2024-03-22", end = "2024-03-23", type = "i", id = id, plt=F,api_key = api) %>% mutate(type = "indoor")
     df_i <- bind_rows(df_i, data_wings)
 }
 
 for (id in ids_o) {
-    data_wings <- getWingsData(start = "2024-03-22", end = "2024-03-23", type = "o", id = id, plt=F) %>% mutate(type = "outdoor")
+    data_wings <- getWingsData(start = "2024-03-22", end = "2024-03-23", type = "o", id = id, plt=F,api_key = api) %>% mutate(type = "outdoor")
     df_o <- bind_rows(df_o, data_wings)
 }
 
@@ -1457,18 +1457,18 @@ palas <- getPalasData("data\\AQ_Guard\\",
     ) %>% 
     openair::timeAverage(avg.time="1 min",start="2024-03-22 00:00:00",statistic = "mean",data.thresh = 0) %>% 
     mutate(device_id="Palas_13265")%>%mutate(date=date-2*3600)
-parameters <- names(ls_data%>%dplyr::select(-device_id,-date))
 
-
+parameters <- names(df_i%>%dplyr::select(-device_id,-date))
 #### Precision
 #### indoor
+## 5 min
 sink("output\\Wings_indoor_room_period\\Precision_Wings_indoor_202403221200-202403221600_5min.txt")
 for(p in parameters){
    precision(testdata = df_i%>%mutate(device_id=as.character(device_id)), start="2024-03-22 12:00:00 UTC",
     end="2024-03-22 16:00:00 UTC",parameter=p,avg.time="5 min",devicetype="Wings_indoor_room_test_ATD2.65")
 }
 sink(file=NULL)
-
+## 1 hour
 sink("output\\Wings_indoor_room_period\\Precision_Wings_indoor_202403221200-202403221600_1hour.txt")
 for(p in parameters){
    precision(testdata = df_i%>%mutate(device_id=as.character(device_id)), start="2024-03-22 12:00:00 UTC",

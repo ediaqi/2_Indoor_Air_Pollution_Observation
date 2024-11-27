@@ -142,7 +142,7 @@ getWingsData <- function(start="2023-12-01",end="2023-12-02",type="i",id="17",pl
     print(plot)
     ggsave(plot = plot, paste0(".\\plt\\Wings\\",start, "-", end, "_", id,"_wings_", type, ".png"), width = 45, height = 20, units = "cm", dpi = "screen")
   }
-  return(data)
+  return(data%>%dplyr::select(-timezone))
  }
 
 ## function to get (and return) the data from the chemical gas sensors at TROPOS from the ASCII file

@@ -9,7 +9,7 @@ lapply(list.of.packages, require, character.only = TRUE)
 source("src\\Eval_functions\\accuracy.R")
 source("src\\Eval_functions\\performance.R")
 source("src\\Eval_functions\\correlation.R")
-source("src\\Eval_functions\\Device_Evaluation\\precision.R")
+source("src\\Eval_functions\\precision.R")
 source("src\\Eval_functions\\RH_test.R")
 
 # all functions to get the data of the devices
