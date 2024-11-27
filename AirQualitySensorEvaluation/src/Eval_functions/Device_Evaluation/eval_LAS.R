@@ -1393,7 +1393,7 @@ rename(device_id="device")
 
 ls_data <- getLSData(path = "data\\LS_PID\\Download", datasource = "device",
         start = "2024-03-22",
-        end = "2024-03-23",hours_difference_to_local_time = 1)%>%
+        end = "2024-03-23")%>%
         openair::timeAverage(avg.time="3 min",start.date = "2024-03-22 00:00:00",type="device_id")
 
 parameters <- names(ls_data%>%dplyr::select(-device_id,-date))

@@ -56,10 +56,10 @@ getLSData <- function(
          names(data) <- c("date", "device_id", "NO2", "CO", "O3", "RH_CO2", "CO2", "temp_CO2", "PM02.5", "PM10", "VOC", "temp_VOC", "RH", "air_temp", "air_pressure", "VOC_P3")
 
     } else if (datasource == "device") {
-        f.pid <- list.files(path,
+        f.pid <- list.files(paste0(path, "\\Download\\"),
             pattern = ".csv", full.names = T, recursive = T
         )
-
+        
         t.pid <- data.frame()
         for (f in f.pid) {
             temp <- read_delim(f, delim = ",", col_names = T, id = "device_id") %>% mutate(device_id = substr(basename(f), 1, 12))

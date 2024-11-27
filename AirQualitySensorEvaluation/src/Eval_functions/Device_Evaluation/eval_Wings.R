@@ -1433,7 +1433,7 @@ summary_performance(
 
 results <- readr::read_delim("data\\result_room_ATD_2.65.csv", col_names = T, delim = ",") %>% 
 spread(var,val) %>% 
-rename(device_id="device")
+rename(device_id="device") %>% mutate(date=date+3600)
 
 #indoor and outdoor data
 ids_i <- c(17, 18, 19)
@@ -1462,34 +1462,34 @@ parameters <- names(df_i%>%dplyr::select(-device_id,-date,-type))
 #### Precision
 #### indoor
 ## 5 min
-sink("output\\Wings_indoor_room_period\\Precision_Wings_indoor_202403221200-202403221600_5min.txt")
+sink("output\\Wings_indoor_room_period\\Precision_Wings_indoor_202403221200-202403221700_5min.txt")
 for(p in parameters){
-   precision(testdata = df_i%>%mutate(device_id=as.character(device_id)), start="2024-03-22 12:00:00 UTC",
-    end="2024-03-22 16:00:00 UTC",parameter=p,avg.time="5 min",devicetype="Wings_indoor_room_test_ATD2.65")
+   precision(testdata = df_i%>%mutate(device_id=as.character(device_id)), start="2024-03-22 13:00:00 UTC",
+    end="2024-03-22 17:00:00 UTC",parameter=p,avg.time="5 min",devicetype="Wings_indoor_room_test_ATD2.65")
 }
 sink(file=NULL)
 ## 1 hour
-sink("output\\Wings_indoor_room_period\\Precision_Wings_indoor_202403221200-202403221600_1hour.txt")
+sink("output\\Wings_indoor_room_period\\Precision_Wings_indoor_202403221200-202403221700_1hour.txt")
 for(p in parameters){
-   precision(testdata = df_i%>%mutate(device_id=as.character(device_id)), start="2024-03-22 12:00:00 UTC",
-    end="2024-03-22 16:00:00 UTC",parameter=p,avg.time="1 hour",devicetype="Wings_indoor_room_test_ATD2.65")
+   precision(testdata = df_i%>%mutate(device_id=as.character(device_id)), start="2024-03-22 13:00:00 UTC",
+    end="2024-03-22 17:00:00 UTC",parameter=p,avg.time="1 hour",devicetype="Wings_indoor_room_test_ATD2.65")
 }
 sink(file=NULL)
 
 #### outdoor
 parameters <- names(df_o%>%dplyr::select(-device_id,-date,-type))
 ## 10 min
-sink("output\\Wings_outdoor_room_period\\Precision_Wings_outdoor_202403221200-202403221600_10min.txt")
+sink("output\\Wings_outdoor_room_period\\Precision_Wings_outdoor_202403221300-202403221700_10min.txt")
 for(p in parameters){
    precision(testdata = df_o%>%mutate(device_id=as.character(device_id)), start="2024-03-22 12:00:00 UTC",
     end="2024-03-22 16:00:00 UTC",parameter=p,avg.time="10 min",devicetype="Wings_outdoor_room_test_ATD2.65")
 }
 sink(file=NULL)
 ## 1 hour
-sink("output\\Wings_outdoor_room_period\\Precision_Wings_outdoor_202403221200-202403221600_1hour.txt")
+sink("output\\Wings_outdoor_room_period\\Precision_Wings_outdoor_202403221300-202403221700_1hour.txt")
 for(p in parameters){
-   precision(testdata = df_o%>%mutate(device_id=as.character(device_id)), start="2024-03-22 12:00:00 UTC",
-    end="2024-03-22 16:00:00 UTC",parameter=p,avg.time="1 hour",devicetype="Wings_outdoor_room_test_ATD2.65")
+   precision(testdata = df_o%>%mutate(device_id=as.character(device_id)), start="2024-03-22 13:00:00 UTC",
+    end="2024-03-22 17:00:00 UTC",parameter=p,avg.time="1 hour",devicetype="Wings_outdoor_room_test_ATD2.65")
 }
 sink(file=NULL)
 
