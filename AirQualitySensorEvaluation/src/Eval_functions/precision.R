@@ -72,7 +72,7 @@ precision <- function(testdata = data,
         
 
     print(plt)
-    ggsave(plot = plt, paste0(".\\plt\\", devicetype, "\\Precision\\", parameter, "_", strftime(start, format = "%Y%m%d_%H%M%S"), "-", strftime(end, format = "%Y%m%d_%H%M%S"), "_", avg.time, ".png"), width = 25, height = 15, units = "cm", dpi = 450)
+    ggsave(plot = plt, paste0(".\\plt\\", devicetype, "\\Precision\\", parameter, "_", strftime(start, format = "%Y%m%d_%H%M%S"), "-", strftime(end, format = "%Y%m%d_%H%M%S"), "_", avg.time, ".png"), width = 25, height = 15, units = "cm", dpi = 450,create.dir = TRUE)
     print(paste0("Parameter ", parameter, " has a precision of: ", signif(result, 3), " %."))
     return(result)
 }

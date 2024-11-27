@@ -1458,7 +1458,7 @@ palas <- getPalasData("data\\AQ_Guard\\",
     openair::timeAverage(avg.time="1 min",start="2024-03-22 00:00:00",statistic = "mean",data.thresh = 0) %>% 
     mutate(device_id="Palas_13265")%>%mutate(date=date-2*3600)
 
-parameters <- names(df_i%>%dplyr::select(-device_id,-date))
+parameters <- names(df_i%>%dplyr::select(-device_id,-date,-type))
 #### Precision
 #### indoor
 ## 5 min
