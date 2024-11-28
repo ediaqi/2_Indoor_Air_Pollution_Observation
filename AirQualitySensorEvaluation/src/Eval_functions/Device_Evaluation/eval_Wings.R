@@ -1606,6 +1606,7 @@ for(p in parameters){
 }
 sink(file=NULL)
 
+### Indoor
 # vs Tropos - Ref
 parameters <- match_parameters(df_i %>% dplyr::select(-device_id),results_amsulf)
 for(p in parameters){
@@ -1630,7 +1631,30 @@ for(p in parameters){
     end="2024-03-26 17:00:00 UTC",parameter=p,avg.time="1 hour",devicetype="Wings_indoor_room_test_AmSulf",reference_device="Palas")
 }
 
+#### Outdoor
+# vs Tropos - Ref
+parameters <- match_parameters(df_o %>% dplyr::select(-device_id),results_amsulf)
+for(p in parameters){
+   correlation(test_data = df_o%>%mutate(device_id=as.character(device_id)),reference=results_amsulf, start="2024-03-26 11:00:00 UTC",
+    end="2024-03-26 17:00:00 UTC",parameter=p,avg.time="10 min",devicetype="Wings_outdoor_room_test_AmSulf",reference_device="MPSS_APSS_Amsulf_1.77")
+}
 
+for(p in parameters){
+   correlation(test_data = df_o%>%mutate(device_id=as.character(device_id)),reference=results_amsulf, start="2024-03-26 11:00:00 UTC",
+    end="2024-03-26 17:00:00 UTC",parameter=p,avg.time="1 hour",devicetype="Wings_outdoor_room_test_AmSulf",reference_device="MPSS_APSS_Amsulf_1.77")
+}
+
+## vs Palas
+parameters <- match_parameters(df_o%>%dplyr::select(-device_id),palas)
+for(p in parameters){
+   correlation(test_data = df_o%>%mutate(device_id=as.character(device_id)),reference=palas, start="2024-03-26 11:00:00 UTC",
+    end="2024-03-26 17:00:00 UTC",parameter=p,avg.time="10 min",devicetype="Wings_outdoor_room_test_AmSulf",reference_device="Palas")
+}
+
+for(p in parameters){
+   correlation(test_data = df_o%>%mutate(device_id=as.character(device_id)),reference=palas, start="2024-03-26 11:00:00 UTC",
+    end="2024-03-26 17:00:00 UTC",parameter=p,avg.time="1 hour",devicetype="Wings_outdoor_room_test_AmSulf",reference_device="Palas")
+}
 
 
 
