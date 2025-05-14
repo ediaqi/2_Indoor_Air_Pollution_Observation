@@ -661,3 +661,22 @@ getThinnectData <- function(path = "data\\Thinnect", avg.time = "5 min", start =
         }
     return(data)
 }
+ #function to convert ASCII data of the Vaisala GMP sensors recordings (txt file) to a dataframe a for a certain period (**start**, **end**). 
+ 
+vaisalaCO2 <- function(path = "data\\Vaisala-GMP251",
+                       start = "2024-02-12",
+                       end = "2024-02-16",
+                       devicetype = "Vaisala-GMP251") {
+    files <- list.files(path = path, pattern = "_prc.log", full.names = T)
+    df <- NULL
+    for (f in files) {
+        tmp <- read_delim(f, delim = "  ", col_names = c("date", "CO2"), col_types=c("c","d"))
+        df <- bind_rows(df, tmp)
+    }
+    Sys.getlocale("LC_TIME") -> olcT
+    Sys.setlocale("LC_TIME", "English")
+    
+    df <- df %>% mutate(date=as.POSIXct(strptime(date,format = "[%a %b %d %H:%M:%OS %Y]",tz="UTC"),tz="UTC"),CO2 = as.numeric(CO2))
+    return(df %>% dplyr::filter(between(date, as.POSIXct(start,tz="UTC"), as.POSIXct(end,tz="UTC"))))
+    Sys.setlocale("LC_TIME", olcT)
+}
