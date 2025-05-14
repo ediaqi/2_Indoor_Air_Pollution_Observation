@@ -661,8 +661,8 @@ getThinnectData <- function(path = "data\\Thinnect", avg.time = "5 min", start =
         }
     return(data)
 }
- #function to convert ASCII data of the Vaisala GMP sensors recordings (txt file) to a dataframe a for a certain period (**start**, **end**). 
  
+#function to convert ASCII data of the Vaisala GMP sensors recordings (txt file) to a dataframe a for a certain period (**start**, **end**). 
 vaisalaCO2 <- function(path = "data\\Vaisala-GMP251",
                        start = "2024-02-12",
                        end = "2024-02-16",

@@ -100,6 +100,8 @@ Details: Comments within the script.
 *getThinnectData()* converts ASCII data of the Thinnect sensors recordings (stored in Excel spreadsheets) to a data frame averaged to a desired average time (*avg.time*) for a certain period (**start**, **end**). It does not apply to the CSV data files. Please look at eval_Thinnect.R for details. 
 Plot of period (**plot**=TRUE/FALSE) can be provided.
 
+*VaisalaCO2()* converts ASCII data of the Vaisala GMP sensors recordings (txt file) to a dataframe a for a certain period (**start**, **end**). 
+
 Details: Comments within the script.
 
 ## **Data**
